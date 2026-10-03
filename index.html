@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus - Organizador de Estudio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root{
+            --bg: #f4f4f8;
+            --card: #ffffff;
+            --border: #ececf1;
+            --text: #17181c;
+            --text-dim: #6b6d76;
+            --text-faint: #9799a3;
+            --violet: #6d5bf0;
+            --violet-light: #efedfe;
+            --violet-dark: #5844e0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow: 0 1px 2px rgba(20,20,40,.04), 0 8px 24px -12px rgba(20,20,40,.08);
+        }
+
+        *{ box-sizing: border-box; }
+
+        html, body{
+            height: 100%;
+        }
+
+        body{
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header{
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo{
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--violet);
+            letter-spacing: -0.5px;
+        }
+
+        .header nav{
+            display: flex;
+            gap: 24px;
+        }
+
+        .header nav a{
+            text-decoration: none;
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .header nav a:hover{
+            color: var(--violet);
+        }
+
+        .header button{
+            background: var(--violet-light);
+            color: var(--violet-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header button:hover{
+            background: var(--violet);
+            color: white;
+        }
+
+        /* Bienvenida */
+        .bienvenida{
+            text-align: center;
+            padding: 60px 24px 40px;
+        }
+
+        .bienvenida h1{
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0 0 12px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--violet) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bienvenida p{
+            font-size: 18px;
+            color: var(--text-dim);
+            margin: 0;
+        }
+
+        /* Contenido principal */
+        .contenido{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 0 24px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 768px){
+            .contenido{
+                grid-template-columns: 1fr;
+            }
+            .bienvenida h1{
+                font-size: 32px;
+            }
+        }
+
+        /* Tarjetas */
+        .tareas, .temporizador{
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 28px;
+        }
+
+        .tareas h2, .temporizador h2{
+            margin: 0 0 20px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Input de tareas */
+        .tareas input[type="text"]{
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .tareas input[type="text"]:focus{
+            border-color: var(--violet);
+        }
+
+        .tareas input[type="text"]::placeholder{
+            color: var(--text-faint);
+        }
+
+        /* Lista de tareas */
+        .tarea{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .tarea:hover{
+            background: var(--bg);
+        }
+
+        .tarea input[type="checkbox"]{
+            width: 18px;
+            height: 18px;
+            accent-color: var(--violet);
+            cursor: pointer;
+        }
+
+        .tarea span{
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .tarea input[type="checkbox"]:checked + span{
+            text-decoration: line-through;
+            color: var(--text-faint);
+        }
+
+        /* Temporizador */
+        .opciones-tiempo{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tiempo-opcion{
+            padding: 8px 14px;
+            border: 1.5px solid var(--border);
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tiempo-opcion:hover{
+            border-color: var(--violet);
+            color: var(--violet);
+        }
+
+        .tiempo-opcion.activo{
+            background: var(--violet);
+            border-color: var(--violet);
+            color: white;
+        }
+
+        .tiempo{
+            font-size: 72px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+            margin: 20px 0;
+            line-height: 1;
+        }
+
+        #btnIniciar{
+            width: 100%;
+            padding: 14px;
+            background: var(--violet);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #btnIniciar:hover{
+            background: var(--violet-dark);
+        }
+
+        /* Footer */
+        footer{
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer p{
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-faint);
+        }
+
+        .footer-links{
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a{
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover{
+            color: var(--violet);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">Focus</div>
+        <nav>
+            <a href="#">Inicio</a>
+            <a href="#">Tareas</a>
+            <a href="#">Estadísticas</a>
+        </nav>
+        <button>Modo oscuro</button>
+    </header>
+
+    <main>
+        <section class="bienvenida">
+            <h1>Organiza. Estudia. Avanza.</h1>
+            <p>Concéntrate en lo que tienes que hacer.</p>
+        </section>
+
+        <section class="contenido">
+            <div class="tareas">
+                <h2>Mis tareas</h2>
+                <input type="text" placeholder="Agregar una tarea...">
+                <div class="tarea">
+                    <input type="checkbox">
+                    <span>Matemáticas</span>
+                </div>
+                <div class="tarea">
+                    <input type="checkbox">
+                    <span>Historia</span>
+                </div>
+                <div class="tarea">
+                    <input type="checkbox">
+                    <span>Programación</span>
+                </div>
+            </div>
+
+            <div class="temporizador">
+                <h2>Tiempo de estudio</h2>
+                <div class="opciones-tiempo">
+                    <button class="tiempo-opcion" data-minutos="5">5 min</button>
+                    <button class="tiempo-opcion" data-minutos="10">10 min</button>
+                    <button class="tiempo-opcion" data-minutos="15">15 min</button>
+                    <button class="tiempo-opcion" data-minutos="20">20 min</button>
+                    <button class="tiempo-opcion" data-minutos="25">25 min</button>
+                    <button class="tiempo-opcion" data-minutos="30">30 min</button>
+                    <button class="tiempo-opcion" data-minutos="60">60 min</button>
+                </div>
+                <div class="tiempo" id="tiempo">25:00</div>
+                <button id="btnIniciar">Iniciar</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Focus</p>
+        <div class="footer-links">
+            <a href="#">Sobre nosotros</a>
+            <a href="#">Contacto</a>
+        </div>
+    </footer>
+
+    <script>
+        const tiempoEl = document.getElementById('tiempo');
+        const btnIniciar = document.getElementById('btnIniciar');
+        const opcionesTiempo = document.querySelectorAll('.tiempo-opcion');
+
+        let segundosTotales = 25 * 60;
+        let intervalo = null;
+        let corriendo = false;
+
+        function actualizarPantalla() {
+            const minutos = Math.floor(segundosTotales / 60);
+            const segundos = segundosTotales % 60;
+            tiempoEl.textContent =
+                String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
+        }
+
+        function iniciarTemporizador() {
+            intervalo = setInterval(() => {
+                if (segundosTotales > 0) {
+                    segundosTotales--;
+                    actualizarPantalla();
+                } else {
+                    clearInterval(intervalo);
+                    corriendo = false;
+                    btnIniciar.textContent = 'Iniciar';
+                    alert('¡Tiempo de estudio terminado!');
+                }
+            }, 1000);
+        }
+
+        function detenerTemporizador() {
+            clearInterval(intervalo);
+            corriendo = false;
+            btnIniciar.textContent = 'Iniciar';
+        }
+
+        opcionesTiempo.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                detenerTemporizador();
+                const minutosSeleccionados = parseInt(btn.dataset.minutos, 10);
+                segundosTotales = minutosSeleccionados * 60;
+                actualizarPantalla();
+                opcionesTiempo.forEach((b) => b.classList.remove('activo'));
+                btn.classList.add('activo');
+            });
+        });
+
+        btnIniciar.addEventListener('click', () => {
+            if (!corriendo) {
+                corriendo = true;
+                btnIniciar.textContent = 'Pausar';
+                iniciarTemporizador();
+            } else {
+                corriendo = false;
+                btnIniciar.textContent = 'Iniciar';
+                clearInterval(intervalo);
+            }
+        });
+
+        actualizarPantalla();
+    </script>
+
+</body>
+</html>
